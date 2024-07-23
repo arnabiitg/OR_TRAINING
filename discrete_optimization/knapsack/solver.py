@@ -3,7 +3,9 @@
 
 from collections import namedtuple
 Item = namedtuple("Item", ['index', 'value', 'weight'])
-from solution import branching
+import copy
+
+from solve import dynammic_approach, greedy_knapsack
 
 def solve_it(input_data):
     # Modify this code to run your optimization algorithm
@@ -25,19 +27,26 @@ def solve_it(input_data):
     # a trivial algorithm for filling the knapsack
     # it takes items in-order until the knapsack is full
     value = 0
-    weight = 0
-    # taken = [0]*len(items)
-
+    taken = []
     # for item in items:
     #     if weight + item.weight <= capacity:
     #         taken[item.index] = 1
     #         value += item.value
-    #         weight += item.weight
-    items = sorted(items, key= lambda v: (v.value/v.weight), reverse = True)
-    taken, value = branching(0,capacity,items)
+    #         weight += item.weight 
+    
+    
+    if len(items) <= 200:
+        took = [[0]*capacity for i in range(item_count)]
+        dp = [[0]*capacity for i in range(item_count)]
+        value = dynammic_approach(items,item_count,capacity,dp,took)
+
+        for i in range(item_count):
+            taken.append(int(bool(took[item_count-1][capacity-1] & (1<<(i)))))
+    else:
+        value, taken = greedy_knapsack(items, capacity)
     
     # prepare the solution in the specified output format
-    output_data = str(value) + ' ' + str(1) + '\n'
+    output_data = str(value) + ' ' + str(0) + '\n'
     output_data += ' '.join(map(str, taken))
     return output_data
 
